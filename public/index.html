@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>智能旅行规划助手</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section id="homeView" class="view home-view active" aria-label="旅行助手首页">
+        <div class="assistant-hero">
+          <div class="assistant-icon" aria-hidden="true">✦</div>
+          <h1>你好，我是你的专属旅行规划助手！</h1>
+          <p>把想去的城市、天数、收藏地点或旅行想法告诉我，我会一步步帮你整理成可执行路线。</p>
+        </div>
+
+        <div class="input-dock">
+          <div class="import-tabs" aria-label="导入方式">
+            <button class="import-tab active" data-mode="text">文本</button>
+            <button class="import-tab" data-mode="image">截图</button>
+            <button class="import-tab" data-mode="link">链接</button>
+          </div>
+          <textarea id="startInput" rows="3" placeholder="例如：我想和朋友去上海玩 3 天，收藏了外滩、武康路、上海博物馆、豫园，不想太累。"></textarea>
+          <div id="imageImport" class="import-box hidden">
+            <input id="screenshotInput" type="file" accept="image/*" />
+            <p id="screenshotStatus">上传小红书、抖音、携程截图后，Demo 会模拟识别其中的地点。</p>
+          </div>
+          <div id="linkImport" class="import-box hidden">
+            <input id="linkInput" type="url" placeholder="粘贴小红书 / 抖音 / 携程链接" />
+            <p>Demo 会把链接作为收藏来源，并在追问后生成路线。</p>
+          </div>
+          <button id="startBtn" class="send-btn" aria-label="开始规划">开始规划</button>
+        </div>
+      </section>
+
+      <section id="chatView" class="view chat-view" aria-label="旅行信息追问">
+        <header class="app-header">
+          <button id="backHomeBtn" class="icon-btn" aria-label="返回首页">‹</button>
+          <div>
+            <h2>补充旅行信息</h2>
+            <p>每次只确认关键问题，信息完整后自动生成行程。</p>
+          </div>
+        </header>
+
+        <div class="progress-track" aria-label="信息完整度">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div id="chatLog" class="chat-log"></div>
+
+        <div class="reply-panel">
+          <div id="quickReplies" class="quick-replies"></div>
+          <div class="reply-row">
+            <input id="replyInput" type="text" placeholder="输入你的回答" />
+            <button id="replyBtn" class="round-btn" aria-label="发送">→</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="resultView" class="view result-view" aria-label="每日旅行规划">
+        <header class="result-header">
+          <button id="backChatBtn" class="icon-btn" aria-label="返回修改">‹</button>
+          <div>
+            <h2>你的 3 天上海路线</h2>
+            <p>已优先保留必去地点，并标注需要确认的信息。</p>
+          </div>
+        </header>
+
+        <div class="summary-strip">
+          <article>
+            <strong>3</strong>
+            <span>必去地点</span>
+          </article>
+          <article>
+            <strong>适中</strong>
+            <span>路线强度</span>
+          </article>
+          <article>
+            <strong>2</strong>
+            <span>待确认</span>
+          </article>
+        </div>
+
+        <div id="planTabs" class="plan-tabs" aria-label="方案切换"></div>
+
+        <div class="notice-card">
+          <h3 id="noticeTitle">路线诊断</h3>
+          <p>外滩和北外滩都是浦江景观，体验相似。我没有擅自删除，而是把外滩作为主线，北外滩放在第三天半日，避免绕路。</p>
+        </div>
+
+        <div id="dayPlans" class="day-plans"></div>
+
+        <div class="bottom-actions">
+          <button id="adjustBtn" class="ghost-btn">继续修改</button>
+          <button id="confirmBtn" class="send-btn">确认行程</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
