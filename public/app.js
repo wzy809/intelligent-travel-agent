@@ -81,9 +81,12 @@ function renderQuestion(question) {
   currentQuestion = question;
   $("#progressFill").style.width = `${Math.min(((questionIndex + 1) / TOTAL_QUESTIONS) * 100, 100)}%`;
   addMessage("agent", question.text);
-  $("#quickReplies").innerHTML = question.quick_replies
+  const quickReplies = question.quick_replies || [];
+  // 后端没有给推荐回复时，隐藏快捷回复区，避免出现不贴合目的地的样例按钮。
+  $("#quickReplies").innerHTML = quickReplies
     .map((reply) => `<button type="button" data-reply="${reply}">${reply}</button>`)
     .join("");
+  $("#quickReplies").classList.toggle("hidden", quickReplies.length === 0);
   $("#replyInput").placeholder = "也可以直接输入你的回答";
 }
 
@@ -93,10 +96,33 @@ function confidenceClass(label) {
   return "risk";
 }
 
+
+function countPendingItems(plan) {
+  return (plan.days || []).reduce((total, day) => {
+    return total + (day.items || []).filter((item) => item.confidence?.label && item.confidence.label !== "已确认").length;
+  }, 0);
+}
+
+function updateResultSummary(plan) {
+  const answers = plansPayload?.answers || {};
+  const destination = answers.destination || "旅行";
+  const dayCount = (plan.days || []).length || answers.duration_days || "";
+  const mustGo = answers.must_go || answers.places || plansPayload?.recognized_places || [];
+  const mustGoCount = Array.isArray(mustGo) ? mustGo.length : String(mustGo).split(/[、,，]/).filter(Boolean).length;
+  const pendingCount = countPendingItems(plan);
+
+  // 根据后端真实结果更新顶部标题和概览，避免继续显示 Mock 阶段写死的城市。
+  $(".result-header h2").textContent = `你的 ${dayCount ? `${dayCount} 天` : ""}${destination}路线`;
+  $(".summary-strip article:nth-child(1) strong").textContent = mustGoCount || "-";
+  $(".summary-strip article:nth-child(2) strong").textContent = plan.pace || plan.intensity || "适中";
+  $(".summary-strip article:nth-child(3) strong").textContent = pendingCount;
+}
 function getPlanNotice(plan) {
   const diagnostic = plansPayload?.diagnostics?.[0];
   if (diagnostic) {
-    return `${diagnostic.title}：${diagnostic.message}`;
+    const title = diagnostic.title || diagnostic.name || diagnostic.type || "路线诊断";
+    const message = diagnostic.message || diagnostic.description || diagnostic.content || diagnostic.note || "已根据你的偏好生成路线。";
+    return `${title}：${message}`;
   }
   return plan.summary || "已根据你的偏好生成路线。";
 }
@@ -105,6 +131,8 @@ function renderPlans() {
   const plans = plansPayload?.plans || [];
   const plan = plans.find((item) => item.id === activePlan) || plans[0];
   if (!plan) return;
+
+  updateResultSummary(plan);
 
   $("#planTabs").innerHTML = plans
     .map(

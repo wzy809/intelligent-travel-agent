@@ -9,7 +9,7 @@
 项目当前支持 Demo Mode 和 LLM Mode：
 
 - Demo Mode：无需 API Key，可直接运行，使用本地规则引擎展示完整流程。
-- LLM Mode：配置 OpenAI API Key 后，可调用大模型生成真实旅行方案。
+- LLM Mode：配置 DeepSeek API Key 后，可调用大模型生成真实旅行方案。
 
 ## 2. 项目背景
 
@@ -188,7 +188,7 @@ Agent 会逐步追问缺失信息。
 为了应聘展示和低成本运行，项目支持两种模式：
 
 - 未配置 API Key：使用本地规则引擎，完整展示产品流程。
-- 配置 API Key：调用 OpenAI API，由 LLM 生成真实旅行方案。
+- 配置 DeepSeek API Key：调用 DeepSeek API，由 LLM 生成真实旅行方案。
 
 这体现了产品验证阶段对成本、可演示性和可扩展性的考虑。
 
@@ -237,13 +237,13 @@ POST /api/sessions/{session_id}/confirm
 
 ### 10.4 LLM 接入
 
-后端支持 OpenAI API：
+后端支持 DeepSeek API：
 
-- 通过 `OPENAI_API_KEY` 读取密钥。
-- 通过 `OPENAI_MODEL` 配置模型。
+- 通过 `DEEPSEEK_API_KEY` 读取密钥。
+- 通过 `DEEPSEEK_MODEL` 配置模型，默认 `deepseek-v4-flash`。
 - 要求 LLM 输出固定 JSON 结构。
 - 后端对 LLM 输出做结构校验和归一化。
-- 调用失败时自动回退到规则版方案。
+- 调用失败时返回明确错误，避免误以为生成式 Agent 已生效。
 
 ## 11. 项目价值
 
@@ -285,7 +285,13 @@ POST /api/sessions/{session_id}/confirm
 
 从“出发前规划”扩展到“旅行中实时调整”，如天气变化、景点闭馆、临时想换餐厅等。
 
-## 13. 如何运行
+## 13. 面试讲述重点
+
+面试时可以这样介绍：
+
+> 我做的是一个面向年轻自由行用户的智能旅行规划 Agent。它不是泛泛生成攻略，而是聚焦用户从小红书、抖音、携程收藏很多地点后，如何把这些地点整理成真实可执行路线的问题。产品通过逐步追问补齐关键信息，保留用户必去地点，识别相似地点和路线风险，并输出可解释、可修改的多方案行程。技术上我做了前后端 Demo，并接入/预留了 DeepSeek API、地图 POI、OCR 等后续真实能力。
+
+## 14. 如何运行
 
 ```powershell
 cd D:\AI_Product_DEMO\travel-agent-app
@@ -304,7 +310,11 @@ http://127.0.0.1:8000
 python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
-setx OPENAI_API_KEY "你的_api_key"
+setx LLM_PROVIDER "deepseek"
+setx DEEPSEEK_API_KEY "你的_deepseek_api_key"
+setx DEEPSEEK_MODEL "deepseek-v4-flash"
+setx DEEPSEEK_THINKING "disabled"
 python server.py
 ```
+
 

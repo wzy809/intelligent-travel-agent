@@ -51,7 +51,7 @@ Agent 创建旅行规划会话
 - 方案生成：路线最顺版、松弛体验版、高效打卡版。
 - 方案修改：支持“第二天太累了”“预算降一点”“不要早起”“高效打卡”等自然语言修改。
 - 置信状态：已确认 / 待确认 / 可能变化。
-- Demo Mode + LLM Mode：无 API Key 也可演示，有 API Key 时可调用 OpenAI API 生成真实方案。
+- Demo Mode + LLM Mode：无 API Key 也可演示，有 DeepSeek API Key 时可调用 DeepSeek 生成真实方案。
 
 ## 项目结构
 
@@ -88,29 +88,38 @@ http://127.0.0.1:8000
 
 ## 启用 LLM Mode
 
-如果希望调用真实 OpenAI API 生成路线：
+如果希望调用真实 DeepSeek API 生成路线，先创建 `.env` 文件：
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
-setx OPENAI_API_KEY "你的_api_key"
+copy .env.example .env
+```
+
+然后打开 `.env`，把 `DEEPSEEK_API_KEY` 改成你的真实 Key：
+
+```text
+LLM_PROVIDER=deepseek
+DEEPSEEK_API_KEY=你的_deepseek_api_key
+DEEPSEEK_MODEL=deepseek-v4-flash
+DEEPSEEK_THINKING=disabled
+USE_LLM_EXTRACTION=auto
+```
+
+最后启动：
+
+```powershell
 python server.py
 ```
 
 默认模型：
 
 ```text
-gpt-5
+deepseek-v4-flash
 ```
 
-可通过环境变量修改：
-
-```powershell
-setx OPENAI_MODEL "你的模型名"
-```
-
-说明：如果未配置 API Key 或调用失败，系统会自动回退到本地规则引擎，保证项目可演示。
+说明：如果未配置 DeepSeek API Key 或调用失败，系统会在页面中显示错误原因，不再返回本地兜底路线。
 
 ## API 概览
 
@@ -153,4 +162,5 @@ POST /api/sessions/{session_id}/confirm
 ## 项目说明
 
 本项目重点展示从用户痛点、MVP 范围、Agent 工作流、交互原型到后端接口设计的完整产品思考。
+
 

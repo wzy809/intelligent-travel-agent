@@ -387,9 +387,9 @@ input:focus {
 }
 
 .day-card header {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -406,8 +406,11 @@ input:focus {
   color: var(--coral);
   font-size: 12px;
   font-weight: 700;
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
+
 
 .place-list {
   display: grid;
@@ -416,7 +419,7 @@ input:focus {
 
 .place-card {
   display: grid;
-  grid-template-columns: 58px 1fr;
+  grid-template-columns: minmax(62px, auto) minmax(0, 1fr);
   gap: 10px;
   padding: 12px;
   box-shadow: none;
@@ -425,6 +428,11 @@ input:focus {
 .time {
   color: var(--green);
   font-weight: 800;
+  line-height: 1.35;
+}
+
+.place-card > div {
+  min-width: 0;
 }
 
 .place-card h4 {
@@ -494,6 +502,74 @@ input:focus {
   }
 
   .summary-strip {
+    grid-template-columns: 1fr;
+  }
+}
+/* 结果页布局修正：LLM 会生成较长的中文标题、标签和说明，统一做好换行保护。 */
+.day-card header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.day-card header > div,
+.place-card > div {
+  min-width: 0;
+}
+
+.day-card .tag {
+  justify-self: start;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.day-card h3,
+.notice-card h3,
+.place-card h4,
+.plan-tab,
+.day-card header p,
+.notice-card p,
+.place-card p {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.35;
+}
+
+.day-card header h3 {
+  margin-bottom: 6px;
+}
+
+.place-card {
+  grid-template-columns: minmax(62px, auto) minmax(0, 1fr);
+}
+
+.plan-tabs {
+  min-width: 0;
+}
+
+@media (max-width: 520px) {
+  .plan-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .plan-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .plan-tab {
+    flex: 0 0 auto;
+    max-width: 180px;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 420px) {
+  .place-card {
     grid-template-columns: 1fr;
   }
 }
